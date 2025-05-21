@@ -1,4 +1,4 @@
-# Installation Guide for New Tab Dashboard Chrome Extension
+# Installation Guide for Startab Chrome Extension
 
 Follow these simple steps to install this Chrome extension in development mode:
 

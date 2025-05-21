@@ -1,6 +1,6 @@
 {
     "manifest_version": 3,
-    "name": "New Tab Dashboard",
+    "name": "Startab",
     "description": "A beautiful and minimalist new tab page with a digital clock and to-do list",
     "version": "1.0",
     "permissions": [

@@ -21,6 +21,9 @@ function updateCurrentTime() {
     updateTimeUnit(currentTimeElement.querySelector('.seconds.current'), 
                   currentTimeElement.querySelector('.seconds.next'), 
                   seconds);
+
+    // Update current date
+    updateCurrentDate(now);
 }
 
 function updateTimeUnit(currentDigit, nextDigit, newValue) {
@@ -39,6 +42,57 @@ function updateTimeUnit(currentDigit, nextDigit, newValue) {
             currentDigit.classList.add('next');
             currentDigit.textContent = newValue;
         }, 300);
+    }
+}
+
+// Scramble effect for date
+function scrambleText(element, finalText, duration = 3600, scrambleChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789', frameInterval = 60) {
+    element.classList.add('scramble-animate');
+    const scrambleLength = finalText.length;
+    let frame = 0;
+    const totalFrames = Math.floor(duration / frameInterval);
+    let revealProgress = 0;
+
+    function randomChar() {
+        return scrambleChars[Math.floor(Math.random() * scrambleChars.length)];
+    }
+
+    function scrambleFrame() {
+        let display = '';
+        for (let i = 0; i < scrambleLength; i++) {
+            if (i < revealProgress) {
+                display += finalText[i];
+            } else {
+                display += randomChar();
+            }
+        }
+        element.textContent = display;
+        frame++;
+        if (frame < totalFrames) {
+            if (frame % Math.floor(totalFrames / scrambleLength) === 0 && revealProgress < scrambleLength) {
+                revealProgress++;
+            }
+            setTimeout(scrambleFrame, frameInterval);
+        } else {
+            element.textContent = finalText;
+            element.classList.remove('scramble-animate');
+        }
+    }
+    scrambleFrame();
+}
+
+function updateCurrentDate(dateObj) {
+    const dateElement = document.getElementById('currentDate');
+    if (!dateElement) return;
+    const options = { weekday: 'long', month: 'long', day: 'numeric' };
+    // e.g. "Wednesday, May 21"
+    const dateStr = dateObj.toLocaleDateString(undefined, options);
+    // Only scramble on initial load
+    if (!dateElement.dataset.scrambled) {
+        scrambleText(dateElement, dateStr, 1800, undefined, 60);
+        dateElement.dataset.scrambled = 'true';
+    } else {
+        dateElement.textContent = dateStr;
     }
 }
 
@@ -512,4 +566,4 @@ function createStar() {
         parallaxFactor,
         color
     };
-}
+  }

@@ -9,24 +9,6 @@ body {
     overflow: hidden; /* Prevent scrollbars from particle overflow */
 }
 
-/* Remove the unused loaded class */
-/* body.loaded {
-    background-size: 100% 100%;
-} */
-
-/* Remove unused overlay */
-/* body::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1;
-} */
-
-/* Starlight background effect container */
 #stars-container {
     position: fixed;
     top: 0;
@@ -37,35 +19,6 @@ body {
     z-index: 0;
     background: linear-gradient(45deg, #070707, #101010); /* Darker gradient like Nexus 4 */
 }
-
-/* Remove unnecessary star CSS since we're using canvas rendering */
-/* .star {
-    position: absolute;
-    background-color: rgba(255, 255, 255, 0.8);
-    border-radius: 50%;
-    opacity: 0;
-    animation: twinkle 5s infinite ease-in-out;
-    box-shadow: 0 0 2px rgba(255, 255, 255, 0.8);
-    transition: opacity 0.3s ease-out, left 0.1s ease-out, top 0.1s ease-out;
-}
-
-.star:nth-child(3n) {
-    background-color: rgba(255, 255, 255, 0.9);
-}
-
-.star:nth-child(7n) {
-    background-color: rgba(220, 240, 255, 0.8);
-}
-
-.star:nth-child(11n) {
-    background-color: rgba(255, 240, 230, 0.8);
-}
-
-@keyframes twinkle {
-    0% { opacity: 0; transform: scale(1); }
-    50% { opacity: 0.8; transform: scale(1.1); }
-    100% { opacity: 0; transform: scale(1); }
-} */
 
 #dashboard {
     position: relative;
@@ -82,7 +35,6 @@ body {
     font-size: 64px;
     line-height: 81px;
     color: #FFFFFF;
-    margin-bottom: 40px;
     display: flex;
     align-items: center;
     gap: 0px;
@@ -135,7 +87,6 @@ body {
     opacity: 0;
 }
 
-
 .time-colon {
     font-size: 64px;
     line-height: 81px;
@@ -145,17 +96,13 @@ body {
     align-items: center;
 }
 
-
-@keyframes flip {
-    0% {
-        transform: rotateX(0);
-    }
-    50% {
-        transform: rotateX(90deg);
-    }
-    100% {
-        transform: rotateX(0);
-    }
+.current-date {
+    font-family: 'Google Sans', sans-serif;
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 28px;
+    color: #FFFFFF;
+    margin-left: 12px;
 }
 
 .todo-section {
@@ -184,12 +131,12 @@ body {
     padding: 0;
     gap: 8px;
     margin-bottom: 24px;
-    height: 31px;
     position: relative;
     width: fit-content;
     transform: translateX(0);
     animation: slideIn 0.6s ease-out;
     transition: transform 0.6s ease-out, opacity 0.6s ease-out;
+    min-height: 31px;
 }
 
 .drag-handle {
@@ -212,7 +159,10 @@ body {
     font-size: 24px;
     line-height: 31px;
     color: #FFFFFF;
-    white-space: nowrap;
+    max-width: 280px;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    white-space: normal;
     padding: 0;
     margin: 0;
 }
@@ -357,43 +307,11 @@ body {
     opacity: 0.5;
 }
 
-/* Material Icons */
 .material-icons {
     font-size: 24px;
     line-height: 1;
     vertical-align: middle;
 }
-
-/* Add button */
-/* .add-btn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 16px;
-    background: #007AFF;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.2s;
-}
-
-.add-btn:hover {
-    background: #0056b3;
-}
-
-.add-btn .material-icons {
-    font-size: 20px;
-} */
-
-/* Todo input styles */
-/* .todo-input-container {
-    display: none;
-    align-items: center;
-    gap: 8px;
-    margin-bottom: 16px;
-} */
 
 /* Animations */
 @keyframes fadeIn {
@@ -431,7 +349,6 @@ body {
     animation: slideOut 0.6s ease-out forwards;
 }
 
-/* Add transition for all todo items when layout changes */
 .todo-list > * {
     transition: transform 0.3s ease-out;
 }
@@ -483,4 +400,4 @@ body {
     white-space: nowrap;
     opacity: 0;
     transition: opacity 0.3s ease-in-out;
-  }
+}

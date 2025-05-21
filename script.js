@@ -77,8 +77,7 @@ function createTodoItem(text) {
             const todoItems = document.querySelectorAll('.todo-item');
             if (todoItems.length < 8) {
                 document.getElementById('showAddTodo').style.opacity = '1'; // Reset opacity if less than 8 items
-                document.querySelector('.add-text').style.color = '#0099cc'; // Reset color if less than 8 items
-                document.querySelector('.add-todo-btn .material-icons').style.color = '#0099cc'; // Reset icon color if less than 8 items
+                // Remove color change logic - the button will always be white
             }
         }, 300);
     };
@@ -91,9 +90,8 @@ function createTodoItem(text) {
     // Check the number of todo items after adding
     const todoItems = todoList.querySelectorAll('.todo-item');
     if (todoItems.length >= 8) {
-        document.getElementById('showAddTodo').style.opacity = '0.3'; // Set opacity to 0.5 if 8 or more items
-        document.querySelector('.add-text').style.color = '#FFFFFF'; // Change color to white if 8 or more items
-        document.querySelector('.add-todo-btn .material-icons').style.color = '#FFFFFF'; // Change icon color to white if 8 or more items
+        document.getElementById('showAddTodo').style.opacity = '0.3'; // Set opacity to 0.3 if 8 or more items
+        // Remove color change logic - the button will always be white
     }
     
     return li;
@@ -337,148 +335,181 @@ document.addEventListener('DOMContentLoaded', function() {
             todoList: !!todoList
         });
     }
-
-    // Function to fetch random images from Unsplash
-    async function fetchRandomImages() {
-        const accessKey = 'HSd9xcrbkWd-a66e8bZWfqJKxCSovnX9U7hYNHOzx1E'; // Your actual access key
-        const images = [];
-        
-        // Fetch 24 images (can be done in parallel to speed up)
-        const fetchPromises = [];
-        for (let i = 0; i < 24; i++) {
-            fetchPromises.push(
-                fetch(`https://api.unsplash.com/photos/random?client_id=${accessKey}&query=textures&orientation=landscape&order_by=popular`)
-                    .then(response => response.json())
-                    .then(data => data.urls.regular)
-            );
-        }
-        
-        try {
-            const results = await Promise.all(fetchPromises);
-            return results;
-        } catch (error) {
-            console.error('Error fetching images:', error);
-            return []; // Return empty array if fetching fails
-        }
-    }
-
-    // Function to check if we need to refresh the cache
-    async function getImageCache() {
-        return new Promise((resolve) => {
-            // Check if chrome.storage is available
-            if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
-                chrome.storage.local.get(['imageCache', 'lastCacheTime'], function(result) {
-                    const now = new Date().getTime();
-                    const oneDayMs = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
-                    
-                    // If cache doesn't exist or is older than 24 hours
-                    if (!result.imageCache || !result.lastCacheTime || (now - result.lastCacheTime > oneDayMs)) {
-                        console.log('Refreshing image cache');
-                        
-                        // Fetch new images
-                        fetchRandomImages().then(images => {
-                            // Save to cache
-                            chrome.storage.local.set({ 
-                                imageCache: images,
-                                lastCacheTime: now
-                            }, function() {
-                                console.log('Image cache refreshed with', images.length, 'images');
-                                resolve(images);
-                            });
-                        });
-                    } else {
-                        console.log('Using existing image cache of', result.imageCache.length, 'images');
-                        resolve(result.imageCache);
-                    }
-                });
-            } else {
-                // Fallback to localStorage if chrome.storage is not available
-                const cachedData = localStorage.getItem('imageCache');
-                const lastCacheTime = localStorage.getItem('lastCacheTime');
-                const now = new Date().getTime();
-                const oneDayMs = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
-                
-                if (!cachedData || !lastCacheTime || (now - parseInt(lastCacheTime) > oneDayMs)) {
-                    console.log('Refreshing image cache (localStorage)');
-                    
-                    // Fetch new images
-                    fetchRandomImages().then(images => {
-                        // Save to cache
-                        localStorage.setItem('imageCache', JSON.stringify(images));
-                        localStorage.setItem('lastCacheTime', now.toString());
-                        console.log('Image cache refreshed with', images.length, 'images');
-                        resolve(images);
-                    });
-                } else {
-                    console.log('Using existing image cache (localStorage)');
-                    const images = JSON.parse(cachedData);
-                    resolve(images);
-                }
-            }
-        });
-    }
-
-    // Function to get a random image from the cache
-    async function getRandomImage() {
-        const imageCache = await getImageCache();
-        
-        // If cache is empty (which shouldn't happen, but just in case)
-        if (!imageCache || imageCache.length === 0) {
-            console.error('Image cache is empty');
-            return null;
-        }
-        
-        // Select random image from cache
-        const randomIndex = Math.floor(Math.random() * imageCache.length);
-        return imageCache[randomIndex];
-    }
-
-    // Function to set the background image
-    async function setBackgroundImage() {
-        try {
-            const imageUrl = await getRandomImage();
-            if (imageUrl) {
-                // Remove the 'loaded' class first to reset the animation
-                document.body.classList.remove('loaded');
-                
-                // Set the background image
-                document.body.style.backgroundImage = `url(${imageUrl})`;
-                
-                // Force a reflow to ensure the animation resets
-                void document.body.offsetWidth;
-                
-                // Add the 'loaded' class to trigger the zoom-in animation
-                document.body.classList.add('loaded');
-            }
-        } catch (error) {
-            console.error('Error setting background image:', error);
-        }
-    }
-
-    // Function to clear the image cache
-    function clearImageCache() {
-        console.log('Clearing image cache...');
-        
-        // Check if chrome.storage is available
-        if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
-            chrome.storage.local.remove(['imageCache', 'lastCacheTime'], function() {
-                console.log('Image cache cleared from chrome.storage.local');
-                // Reload the background image
-                setBackgroundImage();
-            });
-        } else {
-            // Fallback to localStorage if chrome.storage is not available
-            localStorage.removeItem('imageCache');
-            localStorage.removeItem('lastCacheTime');
-            console.log('Image cache cleared from localStorage');
-            // Reload the background image
-            setBackgroundImage();
-        }
-    }
-
-    // Expose the clearImageCache function to the global scope
-    window.clearImageCache = clearImageCache;
-
-    // Call the function when the page loads
-    setBackgroundImage();
+    
+    // Initialize starlight effect
+    initStarlight();
 });
+
+// Starlight effect initialization
+function initStarlight() {
+    const container = document.getElementById('stars-container');
+    const starCount = 450; // Number of stars
+    
+    // Create canvas for more efficient rendering
+    const canvas = document.createElement('canvas');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    canvas.style.position = 'absolute';
+    canvas.style.top = '0';
+    canvas.style.left = '0';
+    container.appendChild(canvas);
+    
+    const ctx = canvas.getContext('2d');
+    
+    // Array to store star data
+    const stars = [];
+    
+    // Create stars data
+    for (let i = 0; i < starCount; i++) {
+        stars.push(createStar());
+    }
+    
+    // Track mouse movement
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+    
+    document.addEventListener('mousemove', function(e) {
+        mouseX = e.clientX;
+        mouseY = e.clientY;
+    });
+    
+    // Handle window resize
+    window.addEventListener('resize', function() {
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        
+        // Reposition stars on resize
+        stars.forEach(star => {
+            star.x = star.xPercent * window.innerWidth / 100;
+            star.y = star.yPercent * window.innerHeight / 100;
+        });
+    });
+    
+    // Animation loop
+    function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Calculate center of screen
+        const centerX = window.innerWidth / 2;
+        const centerY = window.innerHeight / 2;
+        
+        // Calculate mouse offset from center (normalized to -1 to 1)
+        const offsetX = (mouseX - centerX) / centerX;
+        const offsetY = (mouseY - centerY) / centerY;
+        
+        // Calculate max distance for brightness calculation
+        const maxDistance = Math.sqrt(Math.pow(window.innerWidth, 2) + Math.pow(window.innerHeight, 2)) / 8; // Reduced to make the effect more pronounced
+        
+        // Update and draw each star
+        for (let i = 0; i < stars.length; i++) {
+            const star = stars[i];
+            
+            // Update twinkle animation - make the blinking more noticeable
+            star.twinklePhase += star.twinkleSpeed;
+            if (star.twinklePhase > 2 * Math.PI) {
+                star.twinklePhase -= 2 * Math.PI;
+            }
+            
+            // Calculate opacity based on twinkle animation with more pronounced effect
+            const twinkleFactor = (Math.sin(star.twinklePhase) + 1) / 2; // 0 to 1
+            const baseOpacity = star.maxOpacity * 0.2 + twinkleFactor * star.maxOpacity * 0.8; // More variation in opacity
+            
+            // Apply parallax movement (increased effect)
+            const shiftX = offsetX * star.parallaxFactor * window.innerWidth / 25; // Doubled parallax effect
+            const shiftY = offsetY * star.parallaxFactor * window.innerHeight / 25; // Doubled parallax effect
+            
+            const finalX = star.x + shiftX;
+            const finalY = star.y + shiftY;
+            
+            // Calculate distance from mouse for brightness boost
+            const distance = Math.sqrt(Math.pow(mouseX - finalX, 2) + Math.pow(mouseY - finalY, 2));
+            const brightnessBoost = Math.max(0, 1 - (distance / maxDistance));
+            
+            // Increase the brightness effect for stars near cursor (multiplied by 2)
+            const finalOpacity = Math.min(0.8, baseOpacity + brightnessBoost * 0.2); // Increased brightness boost
+            
+            // Set fill style based on star color and opacity
+            ctx.fillStyle = star.color.replace('OPACITY', finalOpacity);
+            
+            // Draw star with glow effect for larger stars and stars near cursor
+            const glowSize = star.size * (1 + brightnessBoost * 2); // Larger glow for stars near cursor
+            
+            if (star.size > 1.2 || brightnessBoost > 0.3) { // Also add glow to stars near cursor
+                // Draw glow
+                const glow = ctx.createRadialGradient(
+                    finalX, finalY, 0,
+                    finalX, finalY, glowSize * 2
+                );
+                glow.addColorStop(0, star.color.replace('OPACITY', finalOpacity * 0.8));
+                glow.addColorStop(1, star.color.replace('OPACITY', 0));
+                
+                ctx.beginPath();
+                ctx.fillStyle = glow;
+                ctx.arc(finalX, finalY, glowSize * 2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+            
+            // Draw star with size variation based on proximity to cursor
+            const starSize = star.size * (1 + brightnessBoost * 0.5); // Stars grow slightly when cursor is near
+            ctx.beginPath();
+            ctx.fillStyle = star.color.replace('OPACITY', finalOpacity);
+            ctx.arc(finalX, finalY, starSize, 0, Math.PI * 2);
+            ctx.fill();
+        }
+        
+        requestAnimationFrame(animate);
+    }
+    
+    // Start animation
+    animate();
+}
+
+// Create individual star data object
+function createStar() {
+    // Random position in percentages (for responsive positioning)
+    const xPercent = Math.random() * 100;
+    const yPercent = Math.random() * 100;
+    
+    // Convert percentage to actual pixels
+    const x = xPercent * window.innerWidth / 100;
+    const y = yPercent * window.innerHeight / 100;
+    
+    // Random size (Nexus 4 style has varying subtle sizes)
+    const size = Math.random() * 2 + 0.5; // 0.5-2.5px
+    
+    // Random max opacity
+    const maxOpacity = Math.random() * 0.5 + 0.3; // 0.3-0.8
+    
+    // Random twinkle speed - increased variation for more natural effect
+    const twinkleSpeed = 0.005 + Math.random() * 0.03; // More variation in animation speed (0.005-0.035)
+    const twinklePhase = Math.random() * Math.PI * 2; // Random starting phase
+    
+    // Parallax movement factor (smaller stars move more) - increased for more dramatic effect
+    const parallaxFactor = (4 - size) / 15; // Increased parallax effect (was /15)
+    
+    // Star color (mostly white with some variations)
+    let color;
+    const colorRnd = Math.random();
+    
+    if (colorRnd > 0.9) {
+        // Slight blue tint
+        color = 'rgba(220, 240, 255, OPACITY)';
+    } else if (colorRnd > 0.8) {
+        // Slight warm tint
+        color = 'rgba(255, 240, 230, OPACITY)';
+    } else {
+        // White
+        color = 'rgba(255, 255, 255, OPACITY)';
+    }
+    
+    return {
+        x, y, 
+        xPercent, yPercent,
+        size, 
+        maxOpacity,
+        twinkleSpeed,
+        twinklePhase,
+        parallaxFactor,
+        color
+    };
+}

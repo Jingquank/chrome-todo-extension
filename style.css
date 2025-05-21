@@ -2,20 +2,20 @@ body {
     margin: 0;
     padding: 0;
     font-family: 'Google Sans', sans-serif;
-    background: #000000;
+    background: #070707; /* Much darker background color */
     color: #FFFFFF;
     min-height: 100vh;
     position: relative;
-    background-size: 110% 110%;
-    background-position: center;
-    transition: background-size 8s ease-out;
+    overflow: hidden; /* Prevent scrollbars from particle overflow */
 }
 
-body.loaded {
+/* Remove the unused loaded class */
+/* body.loaded {
     background-size: 100% 100%;
-}
+} */
 
-body::before {
+/* Remove unused overlay */
+/* body::before {
     content: '';
     position: absolute;
     top: 0;
@@ -24,7 +24,48 @@ body::before {
     height: 100%;
     background-color: rgba(0, 0, 0, 0.5);
     z-index: 1;
+} */
+
+/* Starlight background effect container */
+#stars-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    background: linear-gradient(45deg, #070707, #101010); /* Darker gradient like Nexus 4 */
 }
+
+/* Remove unnecessary star CSS since we're using canvas rendering */
+/* .star {
+    position: absolute;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    opacity: 0;
+    animation: twinkle 5s infinite ease-in-out;
+    box-shadow: 0 0 2px rgba(255, 255, 255, 0.8);
+    transition: opacity 0.3s ease-out, left 0.1s ease-out, top 0.1s ease-out;
+}
+
+.star:nth-child(3n) {
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+.star:nth-child(7n) {
+    background-color: rgba(220, 240, 255, 0.8);
+}
+
+.star:nth-child(11n) {
+    background-color: rgba(255, 240, 230, 0.8);
+}
+
+@keyframes twinkle {
+    0% { opacity: 0; transform: scale(1); }
+    50% { opacity: 0.8; transform: scale(1.1); }
+    100% { opacity: 0; transform: scale(1); }
+} */
 
 #dashboard {
     position: relative;
@@ -221,7 +262,7 @@ body::before {
     left: 24px;
     height: 31px;
     transform: translateX(0);
-    transition: color 0.6s ease-in-out;
+    transition: opacity 0.6s ease-in-out;
 }
 
 .add-todo-btn .material-icons {
@@ -230,7 +271,7 @@ body::before {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #0099cc;
+    color: #FFFFFF;
     font-size: 24px;
 }
 
@@ -239,7 +280,7 @@ body::before {
     font-weight: 500;
     font-size: 20px;
     line-height: 25px;
-    color: #0099cc;
+    color: #FFFFFF;
 }
 
 .todo-input {

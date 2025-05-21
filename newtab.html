@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>New Tab</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<body>
+  <div id="dashboard">
+    <div class="current-time" id="currentTime">
+      <div class="time-unit">
+        <div class="time-digit hours current"></div>
+        <div class="time-digit hours next"></div>
+      </div>
+      <span class="time-colon">:</span>
+      <div class="time-unit">
+        <div class="time-digit minutes current"></div>
+        <div class="time-digit minutes next"></div>
+      </div>
+      <span class="time-colon">:</span>
+      <div class="time-unit">
+        <div class="time-digit seconds current"></div>
+        <div class="time-digit seconds next"></div>
+      </div>
+    </div>
+    
+    <div class="todo-section">
+      <ul id="todoList" class="todo-list">
+        <!-- Todo items will be added here dynamically -->
+      </ul>
+      
+      <button id="showAddTodo" class="add-todo-btn">
+        <span class="material-icons add-icon">add</span>
+        <span class="add-text">Add New To-do</span>
+      </button>
+      <span id="message" class="message">let's finish what we have first!</span>
+      
+      <div class="todo-input" style="display: none;">
+        <div class="input-container">
+          <input type="text" id="todoInput" placeholder="Enter new task...">
+          <div class="input-line"></div>
+        </div>
+        <button id="addTodo" class="confirm-btn">
+          <span class="material-icons check-icon">check_circle</span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <script src="script.js"></script>
+</body>
+</html>

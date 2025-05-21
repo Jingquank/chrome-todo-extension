@@ -1,0 +1,15 @@
+{
+    "manifest_version": 3,
+    "name": "New Tab Dashboard",
+    "description": "A custom dashboard for new tabs",
+    "version": "1.0",
+    "permissions": [
+      "storage"
+    ],
+    "chrome_url_overrides": {
+      "newtab": "newtab.html"
+    },
+    "icons": {
+      "128": "icons/icon128.png"
+    }
+  }

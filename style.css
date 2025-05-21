@@ -1,0 +1,445 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Google Sans', sans-serif;
+    background: #000000;
+    color: #FFFFFF;
+    min-height: 100vh;
+    position: relative;
+    background-size: 110% 110%;
+    background-position: center;
+    transition: background-size 8s ease-out;
+}
+
+body.loaded {
+    background-size: 100% 100%;
+}
+
+body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+}
+
+#dashboard {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    padding: 24px;
+    box-sizing: border-box;
+    z-index: 2;
+}
+
+.current-time {
+    font-family: 'Google Sans', sans-serif;
+    font-weight: 400;
+    font-size: 64px;
+    line-height: 81px;
+    color: #FFFFFF;
+    margin-bottom: 40px;
+    display: flex;
+    align-items: center;
+    gap: 0px;
+}
+
+.time-unit {
+    position: relative;
+    width: auto;
+    min-width: 80px;
+    height: 96px;
+    overflow: hidden;
+    box-sizing: border-box;
+}
+
+.time-digit {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 64px;
+    line-height: 81px;
+    transition: transform 0.6s ease-in-out, opacity 0.9s linear;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+}
+
+.time-digit.current {
+    transform: translateY(0);
+    z-index: 2;
+    opacity: 1;
+}
+
+.time-digit.next {
+    transform: translateY(-100%);
+    z-index: 1;
+    visibility: hidden;
+    opacity: 0;
+}
+
+.time-digit.slide-up {
+    transform: translateY(-100%);
+    opacity: 0;
+}
+
+.time-digit.slide-down {
+    transform: translateY(100%);
+    opacity: 0;
+}
+
+
+.time-colon {
+    font-size: 64px;
+    line-height: 81px;
+    color: #FFFFFF;
+    margin: 0px;
+    display: flex;
+    align-items: center;
+}
+
+
+@keyframes flip {
+    0% {
+        transform: rotateX(0);
+    }
+    50% {
+        transform: rotateX(90deg);
+    }
+    100% {
+        transform: rotateX(0);
+    }
+}
+
+.todo-section {
+    position: relative;
+    width: 100%;
+    min-height: calc(100vh - 200px);
+}
+
+.todo-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    max-width: 600px;
+    position: fixed;
+    bottom: 80px;
+    left: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.todo-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0;
+    gap: 8px;
+    margin-bottom: 24px;
+    height: 31px;
+    position: relative;
+    width: fit-content;
+    transform: translateX(0);
+    animation: slideIn 0.6s ease-out;
+    transition: transform 0.6s ease-out, opacity 0.6s ease-out;
+}
+
+.drag-handle {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: move;
+    color: #FFFFFF;
+    font-size: 20px;
+    flex-shrink: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.todo-text {
+    font-family: 'Google Sans', sans-serif;
+    font-weight: 400;
+    font-size: 24px;
+    line-height: 31px;
+    color: #FFFFFF;
+    white-space: nowrap;
+    padding: 0;
+    margin: 0;
+}
+
+.remove-btn {
+    opacity: 0;
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    transition: opacity 0.6s;
+    font-size: 20px;
+    position: absolute;
+    right: -40px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.todo-item:hover .remove-btn {
+    opacity: 1;
+    transition: opacity 0.3s ease-in-out;
+}
+
+/* Hide the remove button on the item being dragged */
+.todo-item.dragging .remove-btn {
+    opacity: 0;
+}
+
+/* Hide the remove button on all other items when any item is being dragged */
+.todo-item.dragging ~ .todo-item .remove-btn {
+    opacity: 0;
+}
+
+.add-todo-btn {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0;
+    gap: 8px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    position: fixed;
+    bottom: 30px;
+    left: 24px;
+    height: 31px;
+    transform: translateX(0);
+    transition: color 0.6s ease-in-out;
+}
+
+.add-todo-btn .material-icons {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #0099cc;
+    font-size: 24px;
+}
+
+.add-text {
+    font-family: 'Google Sans', sans-serif;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 25px;
+    color: #0099cc;
+}
+
+.todo-input {
+    position: fixed;
+    bottom: 30px;
+    left: 24px;
+    display: none;
+    gap: 12px;
+    animation: fadeIn 0.3s ease-out;
+    z-index: 1;
+    align-items: center;
+    height: 31px;
+}
+
+.input-container {
+    position: relative;
+    width: 365px;
+}
+
+.todo-input input {
+    background: none;
+    border: none;
+    padding: 0;
+    color: #FFFFFF;
+    font-family: 'Google Sans', sans-serif;
+    font-size: 20px;
+    width: 100%;
+    outline: none;
+}
+
+.todo-input input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.input-line {
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: #FFFFFF;
+}
+
+.confirm-btn {
+    width: 24px;
+    height: 24px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.confirm-btn .material-icons {
+    color: #FFFFFF;
+    font-size: 20px;
+    line-height: 1;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.todo-item.dragging {
+    opacity: 0.5;
+}
+
+/* Material Icons */
+.material-icons {
+    font-size: 24px;
+    line-height: 1;
+    vertical-align: middle;
+}
+
+/* Add button */
+/* .add-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: #007AFF;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.2s;
+}
+
+.add-btn:hover {
+    background: #0056b3;
+}
+
+.add-btn .material-icons {
+    font-size: 20px;
+} */
+
+/* Todo input styles */
+/* .todo-input-container {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+} */
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideOut {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+}
+
+.todo-item.removing {
+    animation: slideOut 0.6s ease-out forwards;
+}
+
+/* Add transition for all todo items when layout changes */
+.todo-list > * {
+    transition: transform 0.3s ease-out;
+}
+
+#addTodo {
+    width: 40px;
+    height: 40px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#addTodo .material-icons {
+    color: #FFFFFF;
+    font-size: 24px;
+    line-height: 1;
+}
+
+#showAddTodo {
+    transition: opacity 0.9s ease-in-out; /* Smooth transition for opacity changes */
+}
+
+@keyframes wiggle {
+    0% { transform: rotate(0deg); }
+    25% { transform: rotate(-5deg); }
+    50% { transform: rotate(5deg); }
+    75% { transform: rotate(-5deg); }
+    100% { transform: rotate(0deg); }
+}
+
+.wiggle {
+    animation: wiggle 0.5s ease-in-out;
+}
+
+.message {
+    display: none;
+    position: absolute;
+    bottom: -40px;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+  }
